@@ -1,46 +1,16 @@
 from datetime import datetime
-import main
+import time
+import yaml
 
 
-def yaml_lader():
-    return {
-        'M1A_Workflow': {
-            'Type': 'Flow',
-            'Execution': 'Sequential',
-            'Activities': {
-                'TaskA': {
-                    'Type': 'Task',
-                    'Function': 'TimeFunction',
-                    'Inputs': {'FunctionInput': 'TaskA_Input', 'ExecutionTime': '1'}
-                },
-                'TaskB': {
-                    'Type': 'Task',
-                    'Function': 'TimeFunction',
-                    'Inputs': {'FunctionInput': 'TaskB_Input', 'ExecutionTime': '2'}
-                },
-                'FlowA': {
-                    'Type': 'Flow',
-                    'Execution': 'Sequential',
-                    'Activities': {
-                        'TaskC': {
-                            'Type': 'Task',
-                            'Function': 'TimeFunction',
-                            'Inputs': {'FunctionInput': 'TaskC_Input', 'ExecutionTime': '3'}
-                        },
-                        'TaskD': {
-                            'Type': 'Task',
-                            'Function': 'TimeFunction',
-                            'Inputs': {'FunctionInput': 'TaskD_Input', 'ExecutionTime': '4'}
-                        }
-                    }
-                }
-            }
-        }
-    }
+def yaml_loader():
+    with open("Milestone1/Milestone1A.yaml") as file:
+        data = yaml.load(file, Loader=yaml.FullLoader)
+        return data
 
 
 def log_task(flow_name, task_name, msg):
-    log(f'{flow_name}.{task_name} Executing {msg}')
+    log(f'{flow_name}.{task_name} {msg}')
 
 
 def dispatch_flow(flow_name, activities):
@@ -50,14 +20,16 @@ def dispatch_flow(flow_name, activities):
         if task.get('Type') == 'Task':
             dispatch_sequential_tasks(flow_name, task_name, task)
         if task.get('Type') == 'Flow':
-            log_flow(task_name, task)
+            log_flow(f'{flow_name}.{task_name}', task)
 
 
 def dispatch_sequential_tasks(flow_name, task_name, task):
     log_task(flow_name, task_name, 'Entry')
     function_name = task.get('Function')
     function_args = ", ".join(list(task.get('Inputs').values()))
-    log_task(flow_name, task_name, f'{function_name}({function_args})')
+    execution_time = task.get('Inputs').get('ExecutionTime')
+    log_task(flow_name, task_name, f'Executing {function_name}({function_args})')
+    time.sleep(float(execution_time))
     log_task(flow_name, task_name, 'Exit')
 
 
@@ -86,7 +58,7 @@ def log_flow(flow_name, flow):
 
 
 def main():
-    pipeline = yaml_lader()
+    pipeline = yaml_loader()
 
     for key in pipeline.keys():
         log_flow(key, pipeline[key])
