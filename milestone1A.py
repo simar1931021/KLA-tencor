@@ -1,10 +1,12 @@
 from datetime import datetime
 import time
 import yaml
+from main import yamlParser
+from threading import Thread
 
 
 def yaml_loader():
-    with open("Milestone1/Milestone1A.yaml") as file:
+    with open("Milestone1/Milestone1B.yaml") as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
         return data
 
@@ -23,17 +25,23 @@ def dispatch_flow(flow_name, activities):
             log_flow(f'{flow_name}.{task_name}', task)
 
 
-
+def dispatch_sequential_tasks(flow_name, task_name, task):
+    log_task(flow_name, task_name, 'Entry')
+    function_name = task.get('Function')
+    function_args = ", ".join(list(task.get('Inputs').values()))
+    execution_time = task.get('Inputs').get('ExecutionTime')
+    log_task(flow_name, task_name, f'Executing {function_name}({function_args})')
+    time.sleep(float(execution_time))
+    log_task(flow_name, task_name, 'Exit')
 
 
 def dispatch_concurrent_tasks(flow):
     pass
 
-
 def log(msg):
     print(f'{datetime.now()};{msg}')
     msg = f'{datetime.now()};{msg}\n'
-    with open('res.txt', 'a') as f:
+    with open('res2.txt', 'a') as f:
         f.write(msg)
 
 
