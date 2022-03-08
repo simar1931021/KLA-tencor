@@ -12,7 +12,7 @@ M1SampleWorkFlow :
       Inputs : { FunctionInput : "Task2_Input", ExecutionTime : "0" }
     M1SampleSubFlow :
       Type : Flow
-      Execution : Sequential
+      Execution : Concurrent
       Activities :
         M1SampleSubTask1 :
           Type : Task
