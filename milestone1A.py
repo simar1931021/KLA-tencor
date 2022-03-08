@@ -23,14 +23,7 @@ def dispatch_flow(flow_name, activities):
             log_flow(f'{flow_name}.{task_name}', task)
 
 
-def dispatch_sequential_tasks(flow_name, task_name, task):
-    log_task(flow_name, task_name, 'Entry')
-    function_name = task.get('Function')
-    function_args = ", ".join(list(task.get('Inputs').values()))
-    execution_time = task.get('Inputs').get('ExecutionTime')
-    log_task(flow_name, task_name, f'Executing {function_name}({function_args})')
-    time.sleep(float(execution_time))
-    log_task(flow_name, task_name, 'Exit')
+
 
 
 def dispatch_concurrent_tasks(flow):
